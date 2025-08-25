@@ -1,0 +1,83 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+    background: #87CEEB;
+}
+
+#scene-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    cursor: crosshair;
+}
+
+.info-panel {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 100;
+    min-width: 300px;
+    animation: fadeIn 1s ease-out;
+}
+
+.info-panel h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #90EE90;
+    text-shadow: 0 0 5px rgba(144, 238, 144, 0.5);
+}
+
+.info-panel p {
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #E0F6FF;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    font-size: 14px;
+}
+
+.stats span {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* クリック時のエフェクト */
+.click-effect {
+    position: absolute;
+    pointer-events: none;
+    z-index: 200;
+    animation: growFade 0.8s ease-out forwards;
+    color: #90EE90;
+    font-size: 24px;
+    text-shadow: 0 0 5px #90EE90;
+    user-select: none;
+}
+
+@keyframes growFade {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
