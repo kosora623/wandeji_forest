@@ -52,13 +52,15 @@ function init() {
     // 空の追加
     createSky();
 
-    // Raycasterの初期化（クリック検出用）
+    // Raycasterの初期化（クリック/タップ検出用）
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
 
     // イベントリスナー
     window.addEventListener('resize', onWindowResize);
-    renderer.domElement.addEventListener('click', onClick);
+    // マウスとタッチの両方のイベントに対応
+    renderer.domElement.addEventListener('click', onInteraction);
+    renderer.domElement.addEventListener('touchstart', onInteraction);
 
     // FPSカウンター
     startFPSCounter();
@@ -97,8 +99,8 @@ function createGround() {
     const vertices = groundGeometry.attributes.position.array;
     for (let i = 0; i < vertices.length; i += 3) {
         vertices[i + 2] = Math.sin(vertices[i] * 0.03) * 1 + 
-                         Math.cos(vertices[i + 1] * 0.03) * 1 + 
-                         Math.random() * 0.5;
+                          Math.cos(vertices[i + 1] * 0.03) * 1 + 
+                          Math.random() * 0.5;
     }
     groundGeometry.attributes.position.needsUpdate = true;
     groundGeometry.computeVertexNormals();
@@ -125,11 +127,28 @@ function createSky() {
     scene.add(sky);
 }
 
-// クリックイベント処理
-function onClick(event) {
-    // マウス座標を正規化 (-1 〜 1)
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+// クリック/タップイベント処理
+function onInteraction(event) {
+    // タッチイベントで2本指以上の場合、または右クリックの場合は処理を中断
+    if (event.touches && event.touches.length > 1) {
+        return;
+    }
+    if (event.button === 2) { // 右クリック
+        return;
+    }
+
+    let clientX, clientY;
+    if (event.type === 'click') {
+        clientX = event.clientX;
+        clientY = event.clientY;
+    } else if (event.type === 'touchstart') {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+    }
+
+    // マウス/タッチ座標を正規化 (-1 〜 1)
+    mouse.x = (clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(clientY / window.innerHeight) * 2 + 1;
 
     // Raycasterを使って地面との交点を計算
     raycaster.setFromCamera(mouse, camera);
@@ -150,7 +169,7 @@ function onClick(event) {
 
         if (canPlant) {
             plantTree(point.x, point.z);
-            showClickEffect(event.clientX, event.clientY);
+            showClickEffect(clientX, clientY);
         }
     }
 }
